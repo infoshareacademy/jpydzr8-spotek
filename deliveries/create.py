@@ -14,17 +14,17 @@ def read_csv_options(path):
 def create_awizacja():
     print("\n=== ZAKŁADANIE AWIZACJI ===")
     # Typ dostawy
-    types = read_csv_options("db/delivery_types.csv")
+    types = read_csv_options("baza_danych/typ_dostawy_slownik.csv")
     print("Typy dostaw:", types)
     typ = input("Wybierz typ: ")
 
     # Jednostki ładunkowe
-    units = read_csv_options("db/packaging_units.csv")
+    units = read_csv_options("baza_danych/typ_jednostki.csv")
     print("Jednostki ładunkowe:", units)
     jednostka = input("Wybierz jednostkę: ")
 
     # Daty dostaw
-    dates = read_csv_options("db/delivery_dates.csv")
+    dates = read_csv_options("baza_danych/delivery_dates.csv")
     print("Dostępne daty:", dates)
     data = input("Wybierz datę dostawy: ")
 
