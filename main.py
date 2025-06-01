@@ -16,6 +16,7 @@ def run():
         if opcja == "1":
             create_awizacja()
         elif opcja == "2":
+            print("👋 Zakończono.")
             break
         else:
             print("❌ Nieprawidłowa opcja")
