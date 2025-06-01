@@ -4,7 +4,7 @@ import hashlib
 def hash_password(raw_password):
     return hashlib.sha1(raw_password.encode()).hexdigest()
 
-def load_users_from_csv(path="db/users.csv"):
+def load_users_from_csv(path="baza_danych/uzytkownicy.csv"):
     users = {}
     with open(path, newline='', encoding='UTF-8') as csvfile:
         reader = csv.DictReader(csvfile, delimiter=';')
