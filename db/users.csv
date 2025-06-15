@@ -1,4 +1,4 @@
-mail;haslo;kontrahent
+login;password;company
 alpecin1@maildrop.cc;12;Alpecin
 arkea1@maildrop.cc;12;Arkea
 decathlon1@maildrop.cc;12;Decathlon
@@ -19,5 +19,6 @@ movistar2@maildrop.cc;12;Movistar
 specialized_test2@maildrop.cc;12;Specialized_Test
 teamvisma20252@maildrop.cc;12;Teamvisma2025
 uae2@maildrop.cc;12;Uae
-tw ;12;Twteam
-tw ;12;Twteam
+tw1;12;Twteam
+tw2;12;Twteam
+tw3;12;Twteam
