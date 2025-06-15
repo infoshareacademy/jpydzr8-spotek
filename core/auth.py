@@ -1,13 +1,9 @@
 import csv
 import hashlib
 
-def hash_password(raw_password):
-    return hashlib.sha1(raw_password.encode()).hexdigest()
-
-def load_users_from_csv(path="baza_danych/uzytkownicy.csv"):
-    users = {}
-    with open(path, newline='', encoding='UTF-8') as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=';')
+def read_users():
+    with open('db/users.csv', newline='', encoding='utf-8') as csvfile:
+        reader = csv.reader(csvfile, delimiter=';')
         for row in reader:
             email = row['mail'].strip()
             password = hash_password(row['haslo'].strip())
