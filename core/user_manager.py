@@ -1,15 +1,9 @@
-# Klasa odpowiedzialna za zarządzanie użytkownikami.
-# - ładuje użytkowników z pliku CSV
-# - przechowuje ich w słowniku (login jako klucz)
-# - pozwala sprawdzić, czy dane logowania są poprawne
 import csv
 
-
 class UserManager:
-
-    def __init__(self, sciezka_do_pliku):# Konstruktor klasy
-         self.sciezka = sciezka_do_pliku # Zapamiętuje ścieżkę do pliku
-         self.users = {} # Tworzy pusty słownik na użytkowników
+    def __init__(self, sciezka_do_pliku):
+        self.sciezka = sciezka_do_pliku
+        self.users = {}  # pusty słownik
 
     def load_users(self):
         with open(self.sciezka, newline='', encoding='utf-8') as csvfile:
@@ -26,18 +20,15 @@ class UserManager:
                 return True
         return False
 
-
-    def register_user(self, login, haslo, kontrahent):
+    def register_user(self, login: object, haslo: object, kontrahent: object) -> None:
         if login in self.users:
             print("❌ Użytkownik już istnieje.")
-            return
+            return  # <-- to musi być w tym samym bloku co print
 
-    # Zapis do pliku CSV
         with open(self.sciezka, mode='a', newline='', encoding='utf-8') as csvfile:
             writer = csv.writer(csvfile, delimiter=';')
             writer.writerow([login, haslo, kontrahent])
 
-    # Dodanie do pamięci (słownika)
         self.users[login] = {
             'haslo': haslo,
             'kontrahent': kontrahent
