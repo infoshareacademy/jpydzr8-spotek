@@ -1,3 +1,13 @@
-ID;LOGIN;COMPANY;DELIVERY DATE;DELIVERY TYPE;UNIT_TYPE
-2;tw1;Company_a;11;11;1;2
-3;tw1;Company_a;w;e;r
+id;login;company;delivery_date;delivery_type;unit_type;created_at;driver_name;driver_phone;truck_no;trailer_no;order_no;attachment_name;attachment_size_bytes;attachment_path
+2;tw1;Company_a;11;11;1;2;;;;;;;;
+3;tw1;Company_a;w;e;r;;;;;;;;;
+3;tw1;Company_a;123;2;2;;;;;;;;;
+4;tw1;Company_a;11;Dostawa paczka;Dostawa Paleta;;;;;;;;;
+5;tw1;Company_a;1;Dostawa luz;Dostawa Paleta;;;;;;;;;
+6;tw1;Company_a;1;Dostawa luz;Paleta Mix;;;;;;;;;
+7;tw1;Company_a;1;Dostawa paczka;Paleta Mix;24/08/2025 13:34:38;;;;;;;;
+8;tw1;Company_a;231;Dostawa luz;Paleta Mix;24/08/2025 13:35:13;;;;;;;;
+9;tw1;Company_a;1;Dostawa luz;Paleta Mix;24/08/2025 13:43:30;;;;;;;;
+10;tw1;Company_a;1;Dostawa paczka;Paleta Homo;24/08/2025 13:45:09;;;;;123456;;;
+11;tw1;Company_a;w;Dostawa paczka;Paleta Homo;24/08/2025 13:45:39;w;w;;w;;;;
+12;tw1;Company_a;30.08.2025;Dostawa luz;Paleta Mix;24/08/2025 15:32:01;;;;;;;;

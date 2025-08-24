@@ -1,92 +1,33 @@
-# user_menu.py
-import os
-import csv
+# menus/user_menu.py
+from .pre_advice_create import (
+    create_pre_advice_quick_cli,
+    ensure_archive_and_header,
+    ARCHIVE_PATH,
+    ATTACH_DIR,
+    MAX_ATTACH_BYTES,
+)
+from .pre_advice_manage import handle_my_advices_menu
 
 def run_user_menu(login, company, Delivery):
     while True:
         print("\n🧾 MENU UŻYTKOWNIKA")
         print("1. ➕ Dodaj awizację")
-        print("2. 📄 Moje awizacje (TODO)")
+        print("2. 📄 Moje awizacje (lista/edycja/usuwanie)")
         print("3. 🔙 Wyloguj")
-        wybor2 = input("Wybierz opcję: ")
+        wybor = input("Wybierz opcję: ").strip()
 
-        if wybor2 == "1":
-            print("\n📦 TWORZENIE NOWEJ AWIZACJI")
-
-            delivery_date = input("Data dostawy (DD/MM/RRRR): ")
-            delivery_type = input("Typ dostawy: ")
-            unit_type = input("Typ jednostki: ")
-
-
-            delivery_id = sum(1 for _ in open("archive/pre-advice.csv", encoding='utf-8')) if os.path.exists("archive/pre-advice.csv") else 0
-
-            delivery = Delivery(
-                id=delivery_id,
+        if wybor == "1":
+            create_pre_advice_quick_cli(login, company, Delivery)
+        elif wybor == "2":
+            ensure_archive_and_header()
+            handle_my_advices_menu(
                 login=login,
-                company=company,
-
-                delivery_date=delivery_date,
-                delivery_type=delivery_type,
-                unit_type=unit_type,
-
+                path=ARCHIVE_PATH,
+                attach_dir=ATTACH_DIR,
+                max_attach_bytes=MAX_ATTACH_BYTES,
             )
-
-            delivery.save_to_file("archive/pre-advice.csv")
-            print("✅ Awizacja została zapisana!")
-
-
-
-        elif wybor2 == "2":
-
-            path = "archive/pre-advice.csv"
-
-            if not os.path.exists(path):
-                print("📭 Brak zapisanych awizacji.")
-
-                continue
-
-            with open(path, encoding="utf-8", newline="") as f:
-
-                r = csv.reader(f, delimiter=";")
-
-                try:
-
-                    header = next(r)  # pierwszy wiersz jako nagłówek
-
-                except StopIteration:
-
-                    print("📭 Plik jest pusty.")
-
-                    continue
-
-                matches = []
-
-                for row in r:
-
-                    if len(row) > 1 and row[1].strip() == login:  # szukaj TYLKO po 2. kolumnie
-
-                        matches.append([c.strip() for c in row])
-
-            if matches:
-
-                print("\n🗂️ Twoje awizacje:")
-
-                print(" | ".join(h.strip() for h in header))  # nagłówki
-
-                for row in matches:  # dopasowane wiersze (łącznie z ID)
-
-                    print(" | ".join(row))
-                    break
-
-            else:
-
-                print("📭 Brak awizacji dla tego użytkownika.")
-
-
-
-        elif wybor2 == "3":
+        elif wybor == "3":
             print("👋 Wylogowano.")
             break
-
         else:
             print("⚠️ Nieprawidłowa opcja.")
