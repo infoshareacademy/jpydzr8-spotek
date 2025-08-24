@@ -12,7 +12,7 @@ def ask_delivery_date_dot(
 ) -> str:
     """
     Pyta o datę w formacie DD.MM.RRRR (z kropkami), waliduje istnienie daty i zakres.
-    Zwraca sformatowane 'DD.MM.RRRR'.
+    Zwraca łańcuch 'DD.MM.RRRR'.
     """
     while True:
         raw = input(prompt).strip()
