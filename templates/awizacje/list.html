@@ -1,0 +1,33 @@
+{% extends "awizacje/base.html" %}
+{% block title %}Moje awizacje{% endblock %}
+{% block content %}
+<h1>Moje awizacje</h1>
+{% if rows %}
+<table>
+  <thead>
+    <tr>
+      <th>ID</th><th>Data</th><th>Typ</th><th>HU (P/K/K)</th><th>Utworzono</th><th>Akcje</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in rows %}
+      <tr>
+        <td>#{{ r.id }}</td>
+        <td>{{ r.delivery_date|date:"d.m.Y" }}</td>
+        <td>{{ r.delivery_type }}</td>
+        <td>{{ r.hu_paleta }} / {{ r.hu_karton }} / {{ r.hu_kontener }}</td>
+        <td>{{ r.created_at|date:"d.m.Y H:i" }}</td>
+        <td>
+          <a href="{% url 'awizacje:edit' r.id %}">Edytuj</a>
+          <form action="{% url 'awizacje:delete' r.id %}" method="post" style="display:inline" onsubmit="return confirm('Usunąć dane? ID zostanie.');">
+            {% csrf_token %}<button type="submit">Usuń</button>
+          </form>
+        </td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>Brak awizacji.</p>
+{% endif %}
+{% endblock %}
