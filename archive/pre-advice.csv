@@ -1,13 +1,15 @@
 id;login;company;delivery_date;delivery_type;unit_type;created_at;driver_name;driver_phone;truck_no;trailer_no;order_no;attachment_name;attachment_size_bytes;attachment_path
-2;tw1;Company_a;11;11;1;2;;;;;;;;
-3;tw1;Company_a;w;e;r;;;;;;;;;
-3;tw1;Company_a;123;2;2;;;;;;;;;
-4;tw1;Company_a;11;Dostawa paczka;Dostawa Paleta;;;;;;;;;
-5;tw1;Company_a;1;Dostawa luz;Dostawa Paleta;;;;;;;;;
-6;tw1;Company_a;1;Dostawa luz;Paleta Mix;;;;;;;;;
-7;tw1;Company_a;1;Dostawa paczka;Paleta Mix;24/08/2025 13:34:38;;;;;;;;
-8;tw1;Company_a;231;Dostawa luz;Paleta Mix;24/08/2025 13:35:13;;;;;;;;
-9;tw1;Company_a;1;Dostawa luz;Paleta Mix;24/08/2025 13:43:30;;;;;;;;
-10;tw1;Company_a;1;Dostawa paczka;Paleta Homo;24/08/2025 13:45:09;;;;;123456;;;
-11;tw1;Company_a;w;Dostawa paczka;Paleta Homo;24/08/2025 13:45:39;w;w;;w;;;;
-12;tw1;Company_a;30.08.2025;Dostawa luz;Paleta Mix;24/08/2025 15:32:01;;;;;;;;
+1;tomek;Q;12.08.2025;Dostawa luz;Paleta=3 | Karton=5 | Kontener=1;24.08.2025 16:13:24;;;;;25364453;;;
+2;tomek;Company_a;24.08.2025;11;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;;;;;;;;
+3;tomek;Company_a;24.08.2025;2;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;;;;;;;;
+4;tomek;Company_a;24.08.2025;Dostawa paczka;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;Miras Kowalski;;;;;;;
+5;tomek;Company_a;24.08.2025;Dostawa luz;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;;;;;;;;
+6;tomek;Company_a;24.08.2025;Dostawa luz;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;;;;;;;;
+7;tomek;Company_a;24.08.2025;Dostawa paczka;Paleta=0 | Karton=2 | Kontener=0;24.08.2025 17:03:58;;;;;;;;
+8;tomek;Company_a;24.08.2025;Dostawa luz;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;Miras;;;;;;;
+9;tomek;Company_a;24.08.2025;Dostawa luz;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;;;;;;;;
+10;tomek;Company_a;24.08.2025;Dostawa paczka;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;;;;;123456;;;
+11;tomek;Company_a;24.08.2025;Dostawa paczka;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;w;w;;w;;;;
+12;tomek;Company_a;30.08.2025;Dostawa luz;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;;;;;;;;
+13;Milinka;Company_a;12.08.2025;Dostawa kontener;Paleta=0 | Karton=0 | Kontener=1;24.08.2025 17:20:46;Tomasz Wierzbowski;2155343767;;;12453;Załącznik_nr_1_Zakres_merytoryczny_bootcamp_Python_Developer_JPyDZR7.pdf;203786;C:/Users/tomas/PycharmProjects/jpydzr8-spotek/media/attachments/2025/08/Załącznik_nr_1_Zakres_merytoryczny_bootcamp_Python_Developer_JPyDZR7.pdf
+14;Milinka;Company_a;24.08.2025;Dostawa palety;Paleta=3 | Karton=5 | Kontener=1;24.08.2025 17:58:58;Tomasz Wierzbowski;57456;y64;huty;655637658;;;

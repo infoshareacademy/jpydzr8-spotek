@@ -1,0 +1,10 @@
+{% extends "awizacje/base.html" %}
+{% block title %}Usuń awizację{% endblock %}
+{% block content %}
+<h1>Usunąć dane awizacji #{{ obj.id }}?</h1>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Usuń (soft-delete)</button>
+  <a href="{% url 'awizacje:list' %}">Anuluj</a>
+</form>
+{% endblock %}
