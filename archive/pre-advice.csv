@@ -13,3 +13,4 @@ id;login;company;delivery_date;delivery_type;unit_type;created_at;driver_name;dr
 12;tomek;Company_a;30.08.2025;Dostawa luz;Paleta=0 | Karton=0 | Kontener=0;24.08.2025 17:03:58;;;;;;;;
 13;Milinka;Company_a;12.08.2025;Dostawa kontener;Paleta=0 | Karton=0 | Kontener=1;24.08.2025 17:20:46;Tomasz Wierzbowski;2155343767;;;12453;Załącznik_nr_1_Zakres_merytoryczny_bootcamp_Python_Developer_JPyDZR7.pdf;203786;C:/Users/tomas/PycharmProjects/jpydzr8-spotek/media/attachments/2025/08/Załącznik_nr_1_Zakres_merytoryczny_bootcamp_Python_Developer_JPyDZR7.pdf
 14;Milinka;Company_a;24.08.2025;Dostawa palety;Paleta=3 | Karton=5 | Kontener=1;24.08.2025 17:58:58;Tomasz Wierzbowski;57456;y64;huty;655637658;;;
+15;tw1;Company_a;12.12.2025;Dostawa paczka;Box;12/09/2025 18:53:41;;534345;;;245435364;;;

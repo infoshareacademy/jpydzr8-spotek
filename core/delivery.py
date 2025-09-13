@@ -2,6 +2,7 @@
 import csv
 from dataclasses import dataclass, field
 from datetime import datetime
+from db.deliveries_repo import add_delivery   # ważne: import repo
 
 @dataclass
 class Delivery:
@@ -43,3 +44,23 @@ class Delivery:
                 self.attachment_size_bytes,
                 self.attachment_path,
             ])
+
+    def save_to_db(self) -> int:
+        """
+        Zapisuje rekord do tabeli deliveries w MySQL i zwraca ID.
+        Notatki ('notes') składam z kilku pól opcjonalnych, żeby mieć szybki podgląd.
+        """
+        notes_parts = []
+        if self.login:       notes_parts.append(f"login={self.login}")
+        if self.order_no:    notes_parts.append(f"order={self.order_no}")
+        if self.driver_name: notes_parts.append(f"driver={self.driver_name}")
+        notes = ", ".join(notes_parts) if notes_parts else None
+
+        return add_delivery(
+            login=self.login,
+            supplier=self.company,
+            delivery_date=self.delivery_date,
+            delivery_type=self.delivery_type,
+            unit_type=self.unit_type,
+            notes=notes
+        )
