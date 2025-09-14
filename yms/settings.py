@@ -15,74 +15,88 @@ ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 # --- APLIKACJE ---
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'awizacje',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+
+    # Twoje aplikacje
+    "awizacje",
+    "dbcore",   # ⬅️ najprościej tak; nie myli się z nazwą klasy w apps.py
+    # Jeśli koniecznie chcesz przez AppConfig:
+    # "dbcore.apps.DbcoreConfig",
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",   # musi być
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'yms.urls'
+ROOT_URLCONF = "yms.urls"
 
-# >>> TU poprawna definicja TEMPLATES (DIRS ustawiamy wewnątrz) <<<
+# --- SZABLONY ---
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [ BASE_DIR / 'templates' ],   # <-- Twoje katalogi szablonów
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],  # korzystamy z templates w aplikacjach
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'yms.wsgi.application'
+WSGI_APPLICATION = "yms.wsgi.application"
 
-# --- BAZA DANYCH (SQLite) ---
+# --- BAZA DANYCH (MySQL) ---
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "baza_spotek",
+        "USER": "admin",
+        "PASSWORD": "Admin_1234",
+        "HOST": "127.0.0.1",
+        "PORT": "3306",
+        "OPTIONS": {
+            "charset": "utf8mb4",
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
 # --- WALIDACJE HASEŁ ---
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',},
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# --- i18n / strefa ---
-LANGUAGE_CODE = 'pl'
-TIME_ZONE = 'Europe/Warsaw'
+# --- i18n / TZ ---
+LANGUAGE_CODE = "pl"
+TIME_ZONE = "Europe/Warsaw"
 USE_I18N = True
 USE_TZ = True
 
 # --- STATIC / MEDIA ---
-STATIC_URL = 'static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+STATIC_URL = "static/"
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-LOGIN_URL = "/accounts/login/"
-LOGIN_REDIRECT_URL = "/"   # po udanym logowaniu idź na listę
-LOGOUT_REDIRECT_URL = "/"  # po wylogowaniu wróć na listę
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# --- LOGOWANIE ---
+LOGIN_URL = "awizacje:login"
+LOGIN_REDIRECT_URL = "awizacje:home"
+LOGOUT_REDIRECT_URL = "awizacje:login"

@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8">
+    <title>Rejestracja</title>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 2rem; }
+      form { display:grid; gap:.75rem; max-width: 420px; }
+      label { font-size:.9rem; color:#333; }
+      input { padding:.5rem .6rem; }
+      .actions { display:flex; gap:.5rem; margin-top:.5rem; }
+      a.button, button.button { display:inline-block; padding:.5rem 1rem; border:1px solid #ddd; border-radius:8px; background:#fff; text-decoration:none; }
+      .errors { color:#b00020; }
+    </style>
+  </head>
+  <body>
+    <h1>Rejestracja</h1>
+    <form method="post">
+      {% csrf_token %}
+      {{ form.non_field_errors }}
+      <label for="{{ form.username.id_for_label }}">Login</label>
+      {{ form.username }} {{ form.username.errors }}
+      <label for="{{ form.password1.id_for_label }}">Hasło</label>
+      {{ form.password1 }} {{ form.password1.errors }}
+      <label for="{{ form.password2.id_for_label }}">Powtórz hasło</label>
+      {{ form.password2 }} {{ form.password2.errors }}
+
+      <div class="actions">
+        <button class="button" type="submit">🧾 Utwórz konto</button>
+        <a class="button" href="{% url 'login' %}">🔐 Zaloguj</a>
+        <a class="button" href="{% url 'index' %}">← Start</a>
+      </div>
+    </form>
+  </body>
+</html>

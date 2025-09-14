@@ -1,20 +1,18 @@
-# -*- coding: utf-8 -*-
-from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import render, redirect
-from django.contrib import messages
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 
 def register(request):
     """
-    Prosta rejestracja użytkownika z wbudowanym UserCreationForm.
-    Po sukcesie przekierowuje na ekran logowania.
+    Prosta rejestracja użytkownika na bazie wbudowanego UserCreationForm.
+    Po udanej rejestracji loguje usera i wraca na stronę startową.
     """
     if request.method == "POST":
         form = UserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
-            messages.success(request, "Konto zostało utworzone. Możesz się zalogować.")
-            return redirect("login")
-        messages.error(request, "Popraw błędy w formularzu.")
+            user = form.save()
+            login(request, user)
+            return redirect("index")  # nazwa widoku strony startowej
     else:
         form = UserCreationForm()
-    return render(request, "registration/register.html", {"form": form, "title": "Rejestracja"})
+    return render(request, "registration/register.html", {"form": form})

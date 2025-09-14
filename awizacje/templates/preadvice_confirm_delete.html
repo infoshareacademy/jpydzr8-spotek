@@ -1,0 +1,12 @@
+﻿{% extends "base.html" %}
+{% block title %}Usuń awizację{% endblock %}
+{% block content %}
+<h1>Usuń awizację</h1>
+<p>Czy na pewno usunąć pozycję <strong>[{{ object.id }}] {{ object.date }} / {{ object.company.name }}</strong>?</p>
+
+<form method="post">
+  {% csrf_token %}
+  <button class="btn danger" type="submit">Usuń</button>
+  <a class="btn secondary" href="{% url 'awizacje:list' %}">Anuluj</a>
+</form>
+{% endblock %}

@@ -1,36 +1,40 @@
-import csv
+from django.contrib.auth import authenticate, get_user_model
+
+User = get_user_model()
+
 
 class UserManager:
-    def __init__(self, sciezka_do_pliku):
-        self.sciezka = sciezka_do_pliku
-        self.users = {}  # pusty słownik
+    """
+    Obsługa użytkowników na bazie Django auth_user.
+    """
 
-    def load_users(self):
-        with open(self.sciezka, newline='', encoding='utf-8') as csvfile:
-            reader = csv.DictReader(csvfile, delimiter=';')
-            for row in reader:
-                self.users[row['login']] = {
-                    'haslo': row['password'],
-                    'kontrahent': row['company']
-                }
+    def register_user(self, username: str, password: str, company: str = None) -> bool:
+        """
+        Rejestracja nowego użytkownika (zwykły user).
+        Firma jest ignorowana, bo auth_user jej nie przechowuje.
+        """
+        if User.objects.filter(username=username).exists():
+            print(f"⚠ Użytkownik {username} już istnieje.")
+            return False
+        User.objects.create_user(username=username, password=password)
+        print(f"✅ Użytkownik {username} został zarejestrowany.")
+        return True
 
-    def authenticate(self, login, haslo):
-        if login in self.users:
-            if self.users[login]['haslo'] == haslo:
-                return True
-        return False
+    def authenticate(self, username: str, password: str) -> bool:
 
-    def register_user(self, login: object, haslo: object, kontrahent: object) -> None:
-        if login in self.users:
-            print("❌ Użytkownik już istnieje.")
-            return  # <-- to musi być w tym samym bloku co print
+        """
+        Sprawdza dane logowania.
+        """
+        user = authenticate(username=username, password=password)
+        if user is not None:
 
-        with open(self.sciezka, mode='a', newline='', encoding='utf-8') as csvfile:
-            writer = csv.writer(csvfile, delimiter=';')
-            writer.writerow([login, haslo, kontrahent])
+            return True
+        else:
+            print(f"❌ Błędne dane logowania dla {username}.")
+            return False
 
-        self.users[login] = {
-            'haslo': haslo,
-            'kontrahent': kontrahent
-        }
-        print("✅ Użytkownik został zarejestrowany.")
+    def list_users(self):
+        """
+        Lista wszystkich użytkowników.
+        """
+        return list(User.objects.values_list("id", "username"))

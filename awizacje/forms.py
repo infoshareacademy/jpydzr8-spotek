@@ -1,51 +1,86 @@
+# awizacje/forms.py
+from __future__ import annotations
+
+from datetime import date as date_cls
+from typing import Any, Dict, Optional
+
 from django import forms
-from .models import Delivery, DELIVERY_TYPES
-from decimal import Decimal, InvalidOperation
+from django.contrib.auth.models import User
 
-class DeliveryForm(forms.ModelForm):
-    delivery_date = forms.DateField(
-        label="Data dostawy",
-        input_formats=["%d.%m.%Y"],
-        widget=forms.DateInput(attrs={"placeholder":"DD.MM.RRRR"})
-    )
-    delivery_type = forms.ChoiceField(label="Typ dostawy", choices=DELIVERY_TYPES)
+from dbcore.models import Company, DeliveryType, PreAdvice
 
-    # HU jako stringi -> czyścimy na Decimal w clean_*
-    hu_paleta   = forms.CharField(label="Paleta",   required=False)
-    hu_karton   = forms.CharField(label="Karton",   required=False)
-    hu_kontener = forms.CharField(label="Kontener", required=False)
+
+class SignupForm(forms.ModelForm):
+    password1 = forms.CharField(label="Hasło", widget=forms.PasswordInput)
+    password2 = forms.CharField(label="Powtórz hasło", widget=forms.PasswordInput)
 
     class Meta:
-        model = Delivery
-        fields = [
-            "company",
-            "delivery_date","delivery_type",
-            "hu_paleta","hu_karton","hu_kontener",
-            "driver_name","driver_phone","truck_no","trailer_no",
-            "order_no","attachment",
-        ]
+        model = User
+        fields = ["username", "email"]
+        labels = {"username": "Login", "email": "E-mail (opcjonalnie)"}
 
-    def _clean_decimal(self, field):
-        raw = (self.cleaned_data.get(field) or "").strip().replace("\u00a0","").replace(" ","")
-        if raw == "":
-            return Decimal("0")
-        if "," in raw:
-            raw = raw.replace(".", "").replace(",", ".")
-        try:
-            val = Decimal(raw)
-        except (InvalidOperation, ValueError):
-            raise forms.ValidationError("Podaj liczbę (np. 12,5).")
-        if val < 0:
-            raise forms.ValidationError("Wartość nie może być ujemna.")
-        return val
+    def clean_username(self) -> str:
+        username = (self.cleaned_data.get("username") or "").strip()
+        if not username:
+            raise forms.ValidationError("Login jest wymagany.")
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("Taki login już istnieje.")
+        return username
 
-    def clean_hu_paleta(self):   return self._clean_decimal("hu_paleta")
-    def clean_hu_karton(self):   return self._clean_decimal("hu_karton")
-    def clean_hu_kontener(self): return self._clean_decimal("hu_kontener")
+    def clean(self) -> Dict[str, Any]:
+        cleaned = super().clean()
+        p1 = cleaned.get("password1")
+        p2 = cleaned.get("password2")
+        if p1 and p2 and p1 != p2:
+            self.add_error("password2", "Hasła muszą być identyczne.")
+        return cleaned
 
-    def clean_driver_phone(self):
-        s = (self.cleaned_data.get("driver_phone") or "")
-        return s.replace(" ","").replace("-","").replace("(","").replace(")","").replace(".","")
+    def save(self, commit: bool = True) -> User:
+        user: User = super().save(commit=False)
+        user.set_password(self.cleaned_data["password1"])
+        if commit:
+            user.save()
+        return user
 
-class DeliveryEditForm(DeliveryForm):
-    remove_attachment = forms.BooleanField(label="Usuń obecny załącznik", required=False)
+
+class PreAdviceForm(forms.ModelForm):
+    date = forms.DateField(label="Data dostawy", widget=forms.DateInput(attrs={"type": "date"}))
+    company = forms.ModelChoiceField(label="Firma", queryset=Company.objects.all(), empty_label="— wybierz firmę —")
+    delivery_type = forms.ModelChoiceField(
+        label="Typ dostawy", queryset=DeliveryType.objects.all(), empty_label="— wybierz typ dostawy —"
+    )
+
+    driver_name = forms.CharField(label="Kierowca (imię i nazwisko)", required=False)
+    driver_phone = forms.CharField(label="Telefon kierowcy", required=False)
+    driver_lang = forms.CharField(label="Język (np. PL, EN, UA)", required=False, max_length=10)
+    vehicle_number = forms.CharField(label="Numer auta", required=False)
+    trailer_number = forms.CharField(label="Numer naczepy", required=False)
+    order_number = forms.CharField(label="Numer zamówienia", required=False)
+
+    class Meta:
+        model = PreAdvice
+        exclude = ["login", "attachment_name", "attachment_size_bytes", "attachment_path"]
+        widgets = {"driver_lang": forms.TextInput(attrs={"placeholder": "PL / EN / UA / ..."})}
+
+    def clean_date(self) -> date_cls:
+        d: date_cls = self.cleaned_data["date"]
+        if d.year < 2000:
+            raise forms.ValidationError("Data wygląda na nieprawidłową.")
+        return d
+
+
+class FilterForm(forms.Form):
+    date_from = forms.DateField(label="Data od", required=False, widget=forms.DateInput(attrs={"type": "date"}))
+    date_to = forms.DateField(label="Data do", required=False, widget=forms.DateInput(attrs={"type": "date"}))
+    company = forms.ModelChoiceField(label="Firma", required=False, queryset=Company.objects.all(), empty_label="— wszystkie —")
+    delivery_type = forms.ModelChoiceField(
+        label="Typ dostawy", required=False, queryset=DeliveryType.objects.all(), empty_label="— wszystkie —"
+    )
+
+    def clean(self) -> Dict[str, Any]:
+        cleaned = super().clean()
+        d_from: Optional[date_cls] = cleaned.get("date_from")
+        d_to: Optional[date_cls] = cleaned.get("date_to")
+        if d_from and d_to and d_from > d_to:
+            self.add_error("date_to", "Data do nie może być wcześniejsza niż data od.")
+        return cleaned

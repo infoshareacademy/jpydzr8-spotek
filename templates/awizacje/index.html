@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Awizacje – start{% endblock %}
+
+{% block content %}
+  <h1>Awizacje – start</h1>
+  <p>Wybierz co chcesz zrobić:</p>
+
+  <div class="stack">
+    {% if user.is_authenticated %}
+      <a class="button" href="{% url 'preadvice_list' %}">📦 Lista awizacji</a>
+      <a class="button" href="{% url 'preadvice_create' %}">➕ Dodaj awizację</a>
+      {% if user.is_superuser %}
+        <a class="button" href="/admin/">⚙️ Panel administracyjny</a>
+      {% endif %}
+      <a class="button" href="{% url 'logout' %}">🚪 Wyloguj</a>
+    {% else %}
+      <a class="button" href="{% url 'login' %}">🔐 Zaloguj się</a>
+      <a class="button" href="/accounts/register/">🧾 Zarejestruj się</a>
+    {% endif %}
+  </div>
+{% endblock %}

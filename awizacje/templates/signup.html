@@ -1,0 +1,25 @@
+﻿{% extends "base.html" %}
+{% block title %}Rejestracja{% endblock %}
+{% block content %}
+<h1>Rejestracja</h1>
+<form method="post">
+  {% csrf_token %}
+  <div class="row">
+    <div><label>Login</label>{{ form.username }}</div>
+    <div><label>E-mail</label>{{ form.email }}</div>
+    <div><label>Hasło</label>{{ form.password1 }}</div>
+    <div><label>Powtórz hasło</label>{{ form.password2 }}</div>
+  </div>
+  {% if form.errors %}
+  <ul>
+    {% for field, errors in form.errors.items %}
+      {% for e in errors %}<li>{{ e }}</li>{% endfor %}
+    {% endfor %}
+  </ul>
+  {% endif %}
+  <div style="margin-top:12px;">
+    <button class="btn" type="submit">Utwórz konto</button>
+    <a class="btn secondary" href="{% url 'awizacje:login' %}">Mam konto — zaloguj</a>
+  </div>
+</form>
+{% endblock %}

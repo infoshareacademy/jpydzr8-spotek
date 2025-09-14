@@ -1,65 +1,173 @@
-from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect, get_object_or_404
+﻿from __future__ import annotations
+
+from typing import Any, Dict
+
 from django.contrib import messages
-from .models import Delivery
-from .forms import DeliveryForm, DeliveryEditForm
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
+from django.forms import inlineformset_factory
+from django.http import HttpRequest, HttpResponse
+from django.shortcuts import redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+
+from dbcore.models import PreAdvice, PreAdviceHU
+from .forms import PreAdviceForm, FilterForm, SignupForm
+
+
+def home(request: HttpRequest) -> HttpResponse:
+    """
+    Strona startowa:
+    - gość: 'Zaloguj się' / 'Rejestracja'
+    - zalogowany: skróty do listy/dodawania/wylogowania
+    """
+    return render(request, "home.html")
+
+
+class SignInView(LoginView):
+    template_name = "registration/login.html"
+    next_page = reverse_lazy("awizacje:home")
+
 
 @login_required
-def list_view(request):
-    # superuser widzi wszystko, zwykły user tylko swoje
-    if request.user.is_superuser:
-        rows = Delivery.objects.all().order_by("-created_at")
-    else:
-        rows = Delivery.objects.filter(user=request.user).order_by("-created_at")
-    return render(request, "awizacje/list.html", {"rows": rows})
+def signout_get(request: HttpRequest) -> HttpResponse:
+    """
+    BEZ CSRF: wylogowanie po GET.
+    Zabezpieczone login_required (wymaga bycia zalogowanym).
+    """
+    logout(request)
+    return redirect("awizacje:login")
 
-@login_required
-def add_view(request):
+
+def signup(request: HttpRequest) -> HttpResponse:
     if request.method == "POST":
-        form = DeliveryForm(request.POST, request.FILES)
+        form = SignupForm(request.POST)
         if form.is_valid():
-            d: Delivery = form.save(commit=False)
-            d.user = request.user
-            d.save()
-            messages.success(request, "Awizacja zapisana.")
-            return redirect("awizacje:list")
-        messages.error(request, "Popraw błędy w formularzu.")
+            user = form.save()
+            login(request, user)
+            messages.success(request, "Konto utworzone i zalogowano.")
+            return redirect("awizacje:home")
     else:
-        form = DeliveryForm()
-    return render(request, "awizacje/form.html", {"form": form, "title": "Dodaj awizację"})
+        form = SignupForm()
+    return render(request, "signup.html", {"form": form})
 
-@login_required
-def edit_view(request, pk: int):
-    d = get_object_or_404(Delivery, pk=pk)
-    # tylko właściciel lub superuser
-    if not (request.user.is_superuser or d.user_id == request.user.id):
-        messages.error(request, "Brak uprawnień do edycji tej awizacji.")
-        return redirect("awizacje:list")
 
-    if request.method == "POST":
-        form = DeliveryEditForm(request.POST, request.FILES, instance=d)
+class PreadviceListView(LoginRequiredMixin, ListView):
+    model = PreAdvice
+    template_name = "preadvice_list.html"
+    context_object_name = "items"
+    paginate_by = 25
+
+    def get_queryset(self):
+        qs = (
+            PreAdvice.objects.select_related("company", "delivery_type")
+            .prefetch_related("hu_rows__hu_type")
+            .order_by("-date", "-id")
+        )
+        if not self.request.user.is_superuser:
+            qs = qs.filter(login=self.request.user.username)
+
+        form = FilterForm(self.request.GET or None)
         if form.is_valid():
-            if form.cleaned_data.get("remove_attachment") and d.attachment:
-                d.attachment.delete(save=False)
-                d.attachment = None
-            form.save()
-            messages.success(request, "Zapisano zmiany.")
+            dfrom = form.cleaned_data.get("date_from")
+            dto = form.cleaned_data.get("date_to")
+            comp = form.cleaned_data.get("company")
+            dtyp = form.cleaned_data.get("delivery_type")
+            if dfrom:
+                qs = qs.filter(date__gte=dfrom)
+            if dto:
+                qs = qs.filter(date__lte=dto)
+            if comp:
+                qs = qs.filter(company=comp)
+            if dtyp:
+                qs = qs.filter(delivery_type=dtyp)
+        self.filter_form = form
+        return qs
+
+    def get_context_data(self, **kwargs):
+        ctx = super().get_context_data(**kwargs)
+        ctx["filter_form"] = getattr(self, "filter_form", FilterForm())
+        return ctx
+
+
+HUFormSet = inlineformset_factory(
+    PreAdvice,
+    PreAdviceHU,
+    fields=("hu_type", "quantity"),
+    extra=1,
+    can_delete=True,
+)
+
+
+class PreadviceCreateView(LoginRequiredMixin, CreateView):
+    model = PreAdvice
+    form_class = PreAdviceForm
+    template_name = "preadvice_form.html"
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        ctx = super().get_context_data(**kwargs)
+        if self.request.POST:
+            ctx["formset"] = HUFormSet(self.request.POST)
+        else:
+            ctx["formset"] = HUFormSet()
+        return ctx
+
+    def form_valid(self, form: PreAdviceForm) -> HttpResponse:
+        form.instance.login = self.request.user.username
+        response = super().form_valid(form)
+        formset = HUFormSet(self.request.POST, instance=self.object)
+        if formset.is_valid():
+            formset.save()
+            messages.success(self.request, "Awizacja dodana.")
             return redirect("awizacje:list")
-        messages.error(request, "Popraw błędy w formularzu.")
-    else:
-        form = DeliveryEditForm(instance=d)
-    return render(request, "awizacje/form.html", {"form": form, "title": f"Edytuj awizację #{d.pk}"})
+        self.object.delete()
+        return self.form_invalid(form)
 
-@login_required
-def soft_delete_view(request, pk: int):
-    d = get_object_or_404(Delivery, pk=pk)
-    # tylko właściciel lub superuser
-    if not (request.user.is_superuser or d.user_id == request.user.id):
-        messages.error(request, "Brak uprawnień do usunięcia tej awizacji.")
-        return redirect("awizacje:list")
+    def get_success_url(self) -> str:
+        return reverse("awizacje:list")
 
-    if request.method == "POST":
-        d.soft_delete_and_scrub()
-        messages.success(request, "Dane awizacji usunięte (ID pozostaje).")
-        return redirect("awizacje:list")
-    return render(request, "awizacje/confirm_delete.html", {"obj": d})
+
+class PreadviceUpdateView(LoginRequiredMixin, UpdateView):
+    model = PreAdvice
+    form_class = PreAdviceForm
+    template_name = "preadvice_form.html"
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if not self.request.user.is_superuser:
+            qs = qs.filter(login=self.request.user.username)
+        return qs
+
+    def get_context_data(self, **kwargs: Any) -> Dict[str, Any]:
+        ctx = super().get_context_data(**kwargs)
+        if self.request.POST:
+            ctx["formset"] = HUFormSet(self.request.POST, instance=self.object)
+        else:
+            ctx["formset"] = HUFormSet(instance=self.object)
+        return ctx
+
+    def form_valid(self, form: PreAdviceForm) -> HttpResponse:
+        response = super().form_valid(form)
+        formset = HUFormSet(self.request.POST, instance=self.object)
+        if formset.is_valid():
+            formset.save()
+            messages.success(self.request, "Awizacja zaktualizowana.")
+            return redirect("awizacje:list")
+        return self.form_invalid(form)
+
+    def get_success_url(self) -> str:
+        return reverse("awizacje:list")
+
+
+class PreadviceDeleteView(LoginRequiredMixin, DeleteView):
+    model = PreAdvice
+    template_name = "preadvice_confirm_delete.html"
+    success_url = reverse_lazy("awizacje:list")
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if not self.request.user.is_superuser:
+            qs = qs.filter(login=self.request.user.username)
+        return qs
