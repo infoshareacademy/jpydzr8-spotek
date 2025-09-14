@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="pl">
 <head>
   <meta charset="utf-8">
@@ -28,6 +28,7 @@
 <header>
   <div class="topbar">
     <div>
+      <a href="{% url 'awizacje:home' %}">Start</a>
       <a href="{% url 'awizacje:list' %}">Awizacje</a>
       {% if user.is_authenticated %}
         <a href="{% url 'awizacje:add' %}">Dodaj</a>

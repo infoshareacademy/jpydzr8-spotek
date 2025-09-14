@@ -1,0 +1,68 @@
+﻿{% extends "base.html" %}
+{% block title %}Lista awizacji{% endblock %}
+{% block content %}
+<h1>Lista awizacji</h1>
+
+<form method="get" style="margin:12px 0 18px;">
+  <div class="row">
+    <div>
+      <label>Data od</label>
+      {{ filter_form.date_from }}
+    </div>
+    <div>
+      <label>Data do</label>
+      {{ filter_form.date_to }}
+    </div>
+    <div>
+      <label>Firma</label>
+      {{ filter_form.company }}
+    </div>
+    <div>
+      <label>Typ dostawy</label>
+      {{ filter_form.delivery_type }}
+    </div>
+    <div style="align-self:flex-end">
+      <button class="btn" type="submit">Filtruj</button>
+      <a class="btn secondary" href="{% url 'awizacje:list' %}">Wyczyść</a>
+    </div>
+  </div>
+</form>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Data</th>
+      <th>Firma</th>
+      <th>Login</th>
+      <th>Typ dostawy</th>
+      <th>HU</th>
+      <th>Kierowca (lang)</th>
+      <th>Auto/Naczepa</th>
+      <th>Zamówienie</th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in items %}
+    <tr>
+      <td>{{ p.id }}</td>
+      <td>{{ p.date }}</td>
+      <td>{{ p.company.name }}</td>
+      <td>{{ p.login }}</td>
+      <td>{{ p.delivery_type.Delivery_type }}</td>
+      <td>{{ p.hu_summary }}</td>
+      <td>{{ p.driver_name|default:"-" }} ({{ p.driver_lang|default:"-" }})</td>
+      <td>{{ p.vehicle_number|default:"-" }}/{{ p.trailer_number|default:"-" }}</td>
+      <td>{{ p.order_number|default:"-" }}</td>
+      <td class="actions">
+        <a href="{% url 'awizacje:edit' p.id %}">Edytuj</a>
+        <a class="danger" href="{% url 'awizacje:delete' p.id %}">Usuń</a>
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="10">Brak danych.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

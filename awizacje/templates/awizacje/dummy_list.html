@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Lista awizacji</h1>
+  <ul>
+    {% for preadvice in preadvices %}
+      <li>{{ preadvice.company }} – {{ preadvice.delivery_type }}</li>
+    {% empty %}
+      <li>Brak awizacji.</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

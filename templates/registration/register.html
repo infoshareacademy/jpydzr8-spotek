@@ -1,22 +1,39 @@
-{% extends "awizacje/base.html" %}
-{% block title %}Rejestracja{% endblock %}
-{% block content %}
-<h1>Rejestracja</h1>
-<form method="post">
-  {% csrf_token %}
-  <div class="field">
-    {{ form.username.label_tag }} {{ form.username }}
-    {% if form.username.errors %}<div class="error">{{ form.username.errors }}</div>{% endif %}
-  </div>
-  <div class="field">
-    {{ form.password1.label_tag }} {{ form.password1 }}
-    {% if form.password1.errors %}<div class="error">{{ form.password1.errors }}</div>{% endif %}
-  </div>
-  <div class="field">
-    {{ form.password2.label_tag }} {{ form.password2 }}
-    {% if form.password2.errors %}<div class="error">{{ form.password2.errors }}</div>{% endif %}
-  </div>
-  <button type="submit">Utwórz konto</button>
-</form>
-<p>Masz już konto? <a href="{% url 'login' %}">Zaloguj się</a>.</p>
-{% endblock %}
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <title>Rejestracja</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 24px; }
+      form { display: grid; gap: 10px; max-width: 520px; }
+      input { padding: 10px; border: 1px solid #ddd; border-radius: 8px; }
+      .actions { display: flex; gap: 10px; flex-wrap: wrap; }
+      .button, button { padding: 10px 14px; border-radius: 8px; border: 1px solid #ddd; text-decoration: none; background: white; cursor: pointer; }
+      .button:hover, button:hover { background: #f7f7f7; }
+      h1 { margin-top: 0; }
+      .errors { color: #c00; }
+      ul.errorlist { margin: 0 0 8px 0; color: #c00; }
+    </style>
+  </head>
+  <body>
+    <h1>🧾 Rejestracja</h1>
+
+    {% if form.errors %}
+      <div class="errors">
+        Proszę poprawić błędy w formularzu.
+      </div>
+    {% endif %}
+
+    <form method="post">
+      {% csrf_token %}
+      {{ form.as_p }}
+
+      <div class="actions">
+        <button type="submit">✅ Utwórz konto</button>
+        <a class="button" href="{% url 'login' %}">🔐 Mam już konto</a>
+        <a class="button" href="{% url 'index' %}">← Start</a>
+      </div>
+    </form>
+  </body>
+</html>

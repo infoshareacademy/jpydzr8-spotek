@@ -1,0 +1,46 @@
+﻿{% extends "base.html" %}
+{% block title %}{% if object %}Edytuj{% else %}Dodaj{% endif %} awizację{% endblock %}
+{% block content %}
+<h1>{% if object %}Edytuj{% else %}Dodaj{% endif %} awizację</h1>
+
+<form method="post">
+  {% csrf_token %}
+  <fieldset>
+    <legend>Dane główne</legend>
+    <div class="row">
+      <div><label>Data</label>{{ form.date }}</div>
+      <div><label>Firma</label>{{ form.company }}</div>
+      <div><label>Typ dostawy</label>{{ form.delivery_type }}</div>
+      <div><label>Kierowca</label>{{ form.driver_name }}</div>
+      <div><label>Tel. kierowcy</label>{{ form.driver_phone }}</div>
+      <div><label>Język</label>{{ form.driver_lang }}</div>
+      <div><label>Nr auta</label>{{ form.vehicle_number }}</div>
+      <div><label>Nr naczepy</label>{{ form.trailer_number }}</div>
+      <div><label>Zamówienie</label>{{ form.order_number }}</div>
+    </div>
+  </fieldset>
+
+  <fieldset style="margin-top:16px;">
+    <legend>Pozycje HU</legend>
+    {{ formset.management_form }}
+    <table>
+      <thead><tr><th>HU</th><th>Ilość</th><th>Usuń</th></tr></thead>
+      <tbody>
+        {% for f in formset.forms %}
+          <tr>
+            <td>{{ f.hu_type }}</td>
+            <td>{{ f.quantity }}</td>
+            <td>{% if f.instance.pk %}{{ f.DELETE }}{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p style="font-size:12px;color:#666;">Aby dodać kolejną pozycję, zapisz formularz — pojawi się nowy pusty wiersz.</p>
+  </fieldset>
+
+  <div style="margin-top:12px;">
+    <button class="btn" type="submit">Zapisz</button>
+    <a class="btn secondary" href="{% url 'awizacje:list' %}">Anuluj</a>
+  </div>
+</form>
+{% endblock %}

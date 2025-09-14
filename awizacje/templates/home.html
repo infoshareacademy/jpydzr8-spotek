@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Start{% endblock %}
+{% block content %}
+
+{% if not user.is_authenticated %}
+  <h1>Witaj w systemie awizacji</h1>
+  <p>Najpierw zaloguj się lub załóż konto.</p>
+  <div style="display:flex; gap:12px; margin-top:12px;">
+    <a class="btn" href="{% url 'awizacje:login' %}">Zaloguj się</a>
+    <a class="btn secondary" href="{% url 'awizacje:signup' %}">Zarejestruj się</a>
+  </div>
+{% else %}
+  <h1>Menu</h1>
+  <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+    <a class="btn" href="{% url 'awizacje:list' %}">Lista awizacji</a>
+    <a class="btn" href="{% url 'awizacje:add' %}">Dodaj awizację</a>
+    <a class="btn secondary" href="{% url 'awizacje:logout' %}">Wyloguj</a>
+  </div>
+{% endif %}
+
+{% endblock %}
